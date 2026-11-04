@@ -18,10 +18,10 @@ services:
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
-      PORT: "4000"
+      PORT: "5051"
       TRUST_PROXY: ${TRUST_PROXY:-0}
     ports:
-      - "${API_PUBLISH:-4000}:4000"
+      - "${API_PUBLISH:-5051}:5051"
     # Lets MONGODB_URI reach a database on the server itself as host.docker.internal.
     extra_hosts:
       - host.docker.internal:host-gateway

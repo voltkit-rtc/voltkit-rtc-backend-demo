@@ -84,7 +84,7 @@ check_settings() {
 plan() {
   DOMAIN=$(setting DOMAIN)
   API_PORT=$(setting API_PORT)
-  API_PORT=${API_PORT:-4000}
+  API_PORT=${API_PORT:-5051}
   local profiles=()
   if mongo_bundled "$(setting MONGODB_URI)"; then profiles+=(mongo); fi
   if [[ -n $DOMAIN ]]; then
