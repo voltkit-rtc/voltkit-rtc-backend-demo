@@ -85,17 +85,19 @@ plan() {
   DOMAIN=$(setting DOMAIN)
   API_PORT=$(setting API_PORT)
   API_PORT=${API_PORT:-5051}
-  local profiles=()
+  local profiles=() trust
+  trust=$(setting TRUST_PROXY)
   if mongo_bundled "$(setting MONGODB_URI)"; then profiles+=(mongo); fi
   if [[ -n $DOMAIN ]]; then
     profiles+=(https)
     # Behind Caddy: the API is reached through it, and it trusts Caddy's client address.
     API_PUBLISH=127.0.0.1:$API_PORT
-    TRUST_PROXY=1
+    TRUST_PROXY=${trust:-1}
     PUBLIC_URL=https://$DOMAIN
   else
     API_PUBLISH=$API_PORT
-    TRUST_PROXY=0
+    # Your own proxy in front (nginx, a load balancer): set TRUST_PROXY in .env.production.
+    TRUST_PROXY=${trust:-0}
     local ip
     ip=$(hostname -I 2>/dev/null | awk '{ print $1 }' || true)
     PUBLIC_URL=http://${ip:-<this-server>}:$API_PORT
