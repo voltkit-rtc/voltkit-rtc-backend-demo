@@ -1,0 +1,72 @@
+# Run through ./deploy.sh, which picks the profiles from .env.production:
+#   mongo   a MongoDB container, when MONGODB_URI points at the host "mongo"
+#   https   Caddy in front, with a free certificate, when DOMAIN is set
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: "3"
+
+services:
+  api:
+    build: .
+    image: voltkit-live-api:latest
+    init: true
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "4000"
+      TRUST_PROXY: ${TRUST_PROXY:-0}
+    ports:
+      - "${API_PUBLISH:-4000}:4000"
+    # Lets MONGODB_URI reach a database on the server itself as host.docker.internal.
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      mongo:
+        condition: service_healthy
+        required: false
+    logging: *logging
+
+  mongo:
+    image: mongo:8.0
+    profiles: [mongo]
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-voltkit}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-}
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    logging: *logging
+
+  caddy:
+    image: caddy:2
+    profiles: [https]
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+    logging: *logging
+
+volumes:
+  mongo-data:
+  caddy-data:
+  caddy-config:

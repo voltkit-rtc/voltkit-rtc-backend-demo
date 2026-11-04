@@ -1,0 +1,13 @@
+# Secrets never go into the image: they are passed in when the container starts.
+.env
+.env.*
+
+node_modules
+test
+backups
+*.log
+.git
+Dockerfile
+docker-compose.yml
+Caddyfile
+deploy.sh

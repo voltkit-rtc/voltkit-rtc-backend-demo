@@ -1,0 +1,4 @@
+# HTTPS for the API. Caddy gets and renews the certificate on its own, and passes WebSockets (Socket.IO) through.
+{$DOMAIN} {
+	reverse_proxy api:4000
+}
