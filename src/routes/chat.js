@@ -1,3 +1,8 @@
+/**
+ * Chat with no room behind it: the Public Lounge and direct messages. VoltKit carries messages live.
+ * Direct messages also go through here so that blocks hold, and are stored because VoltKit's chat is not an archive.
+ * Guide: docs/voltkit-server-sdk.md
+ */
 import { Router } from 'express';
 import mongoose from 'mongoose';
 import { z } from 'zod';

@@ -7,6 +7,9 @@ import { deleteRoomQuietly } from './rtc.js';
  * Random 1v1: a waiting line held in memory, one VoltKit room per call. The caller is host and the
  * other side co-host, so both publish. Running several server instances would need this in shared
  * storage; one instance is plenty for a demo.
+ *
+ * The line is here and not on VoltKit because nobody in it is in a room yet, so VoltKit has no
+ * connection to reach them on. Guide: docs/voltkit-server-sdk.md
  */
 export function createMatchmaker({ rtc, send }) {
   /** @type {Map<string, { guest: object, joinedAt: number }>} */

@@ -1,3 +1,8 @@
+/**
+ * The one VoltKit client for the whole server. It holds the API secret, so nothing else should.
+ * Services receive it as an argument, which is what lets the tests pass a fake instead.
+ * Guide: docs/voltkit-server-sdk.md
+ */
 import { StreamClient, StreamError } from '@voltkit-rtc/server';
 
 export function createRtc(config) {

@@ -1,3 +1,8 @@
+/**
+ * Rooms: creating them on VoltKit, deciding who gets which role, and keeping Mongo in line with what is live.
+ * VoltKit is the truth about live state. Mongo holds what VoltKit has no reason to know: titles, bans, coins.
+ * Guide: docs/voltkit-server-sdk.md
+ */
 import { z } from 'zod';
 import { AppError } from '../errors.js';
 import { newId } from '../util.js';
@@ -44,6 +49,8 @@ export function createRoomService({ config, rtc, canGoLive, onRoomsChanged }) {
 
     const roomId = newId('r');
     const { title, type, seats, seatMode, layout, theme } = body;
+    // ensureRoom, not createRoom: it is safe to repeat, so a retry after a lost reply gives the right answer.
+    // The metadata reaches every participant on joining, so the app can draw the room with no extra request.
     const created = await rtc.ensureRoom({
       roomId,
       hostIdentity: guest._id,
@@ -80,6 +87,8 @@ export function createRoomService({ config, rtc, canGoLive, onRoomsChanged }) {
     if (room.bans.includes(guest._id)) throw new AppError(403, 'banned', 'You were removed from this room.');
 
     try {
+      // The role is decided here, never by the request, and is signed into the token. Promotions happen between the
+      // host's app and VoltKit, so someone rejoining keeps the role VoltKit says they hold now.
       const present = room.host.id === guest._id ? 'host' : await liveRole(roomId, guest._id);
       const role = present ?? 'viewer';
       const minted = await rtc.createToken({ roomId, identity: guest._id, role });
