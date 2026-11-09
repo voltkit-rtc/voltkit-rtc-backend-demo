@@ -1,10 +1,20 @@
 # VoltKit RTC: backend example
 
-The Node.js backend for the [React Native example app](https://github.com/voltkit-rtc/react-native-example-audio-video). It shows how a real
+The Node.js backend for the VoltKit example apps. It shows how a real
 product uses [`@voltkit-rtc/server`](https://voltkit.in/docs/server-sdk): creating rooms, minting tokens with the right role, keeping a live room list,
 sending gifts through chat, and running 1v1 matching.
 
 Built with Express, MongoDB and Socket.IO.
+
+The same app, on this one backend, in three frameworks. They can share a room:
+
+| App | Repo |
+| --- | --- |
+| React Native (VoltKit Native) | [react-native-example-audio-video](https://github.com/voltkit-rtc/react-native-example-audio-video) |
+| Flutter (VoltKit Flutter) | [flutter-demo-app](https://github.com/voltkit-rtc/flutter-demo-app) |
+| Kotlin, Android (VoltKit Kotlin) | [android-kotlin-demo-app](https://github.com/voltkit-rtc/android-kotlin-demo-app) |
+
+Each app's repo has a step-by-step guide for adding VoltKit to your own app.
 
 ## What a VoltKit backend does
 
@@ -16,7 +26,7 @@ Audio and video go straight between the app and VoltKit, never through here. Thi
 
 ```mermaid
 flowchart LR
-  App["React Native app"]
+  App["React Native, Flutter or Kotlin app"]
   Backend["This backend"]
   Mongo[("MongoDB")]
   VoltKit["VoltKit RTC"]
